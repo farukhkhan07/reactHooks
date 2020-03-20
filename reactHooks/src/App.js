@@ -4,17 +4,19 @@ import "./Components/Recipee";
 import Recipe from "./Components/Recipee";
 
 const App = () => {
-  const APP_ID = "4bfd2969";
-  const API_KEY = "9176627551d0883cd1a21d9cd53ee42a";
-  const exampleReq = `https://api.edamam.com/search?q=vegetable&app_id=${APP_ID}&app_key=${API_KEY}`;
+  const [recipees, setRecipees] = useState([]);
+  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("chicken");
+
+  const APP_ID = "xxxxxx";
+  const API_KEY = "xxxxxxxxxxx";
+  const exampleReq = `https://api.edamam.com/search?q=${query}&app_id=${APP_ID}&app_key=${API_KEY}`;
 
   const [counter, setCounter] = useState(0);
-  const [recipees, setRecipees] = useState([""]);
-
   useEffect(() => {
     console.log("My Effect");
     getRecipes();
-  }, []);
+  }, [query]);
 
   const getRecipes = async () => {
     const response = await fetch(exampleReq);
@@ -23,18 +25,46 @@ const App = () => {
     setRecipees(data.hits);
     console.log(data.hits);
   };
+
+  const updateSearch = e => {
+    setSearch(e.target.value);
+    console.log(search);
+  };
+
+  const getSearch = e => {
+    e.preventDefault();
+    setQuery(search);
+    setSearch("");
+  };
+
   return (
     <div className="App">
-      <form className="search_form">
-        <input type="text" className="search-bar" />
-        <button type="button" className="search-button">
-          {" "}
-          SEARCH
-        </button>
-      </form>
+      <div className="row mx-auto">
+        <input
+          type="text"
+          className="form-control"
+          value={search}
+          onChange={updateSearch}
+        />
+        <form onSubmit={getSearch}>
+          <div className="col-lg"></div>
+          <div className="col-lg-6">
+            <button type="submit" className="btn btn-primary">
+              {" "}
+              SEARCH
+            </button>
+          </div>
+        </form>
+      </div>
 
       {recipees.map(rec => (
-        <Recipe title={rec.rec.label}></Recipe>
+        <Recipe
+          key={rec.recipe.label}
+          title={rec.recipe.label}
+          calories={rec.recipe.calories}
+          image={rec.recipe.image}
+          ingredients={rec.recipe.ingredients}
+        ></Recipe>
       ))}
     </div>
   );
